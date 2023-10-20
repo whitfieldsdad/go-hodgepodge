@@ -87,9 +87,10 @@ func getProcess(p types.Process, opts *FileOptions) (*Process, error) {
 		Argc:             len(info.Args),
 		StartTime:        &info.StartTime,
 	}
-	file, err := GetFile(info.Exe, opts)
+	path := info.Exe
+	file, err := GetFile(path, opts)
 	if err != nil {
-		log.Warnf("Failed to get file metadata: %s (path: %s)", err, file.Path)
+		log.Warnf("Failed to get file metadata: %s (path: %s)", err, path)
 	} else {
 		process.File = *file
 	}

@@ -52,7 +52,6 @@ func TestFindFilesWithOptions(t *testing.T) {
 		IncludeFileTimestamps: false,
 		IncludeFileTraits:     false,
 		IncludeFileHashes:     false,
-		IncludeFileSize:       false,
 	}
 	go search.FindFiles(results, opts)
 

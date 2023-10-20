@@ -11,21 +11,15 @@ type NetworkLocation struct {
 	MACAddress    string   `json:"mac_address"`
 }
 
+// GetNetworkLocation returns the system's network location (i.e. where it resides on the local network).
 func GetNetworkLocation() (*NetworkLocation, error) {
 	log.Info("Resolving network location...")
-	hostname, _ := GetHostname()
-	loc := &NetworkLocation{
-		Hostname: hostname,
-	}
-	nic, err := GetPrimaryNetworkInterface()
+	pnic, err := GetPrimaryNetworkInterface()
 	if err != nil {
-		log.Warn("Failed to get PNIC while resolving network location")
-		log.Infof("Resolved network location (hostname: %s)", hostname)
-	} else {
-		loc.IPv4Addresses = nic.IPv4Addresses
-		loc.IPv6Addresses = nic.IPv6Addresses
-		loc.MACAddress = nic.MACAddress
-		log.Infof("Resolved network location (hostname: %s, IPv4 addresses: %s, IPv6 addresses: %s, MAC address: %s)", hostname, nic.IPv4Addresses, nic.IPv6Addresses, nic.MACAddress)
+		return nil, err
 	}
+	loc := &pnic.NetworkLocation
+	loc.Hostname, _ = GetHostname()
+	log.Info("Resolved network location")
 	return loc, nil
 }

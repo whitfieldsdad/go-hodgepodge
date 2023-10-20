@@ -37,18 +37,16 @@ func GetFile(path string, opts *FileOptions) (*File, error) {
 		Directory: filepath.Dir(path),
 		Extension: filepath.Ext(path),
 	}
+	info, err := os.Stat(path)
+	if err != nil {
+		return nil, err
+	}
+	size := info.Size()
+	m.Size = &size
 
 	// Optional data collection.
 	if opts == nil {
 		opts = GetDefaultFileOptions()
-	}
-	if opts.IncludeFileSize {
-		info, err := os.Stat(path)
-		if err != nil {
-			log.Errorf("Encountered error while identifying size of %s - %s", path, err.Error())
-		}
-		size := info.Size()
-		m.Size = &size
 	}
 	if opts.IncludeFileTimestamps {
 		timestamps, err := GetFileTimestamps(path)

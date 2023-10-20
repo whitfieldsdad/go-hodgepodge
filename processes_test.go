@@ -9,7 +9,6 @@ import (
 
 func TestListProcesses(t *testing.T) {
 	opts := &FileOptions{
-		IncludeFileSize:       true,
 		IncludeFileHashes:     true,
 		IncludeFileTimestamps: true,
 		IncludeFileTraits:     true,

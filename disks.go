@@ -41,7 +41,7 @@ type DiskPartition struct {
 	Mountpoint     string     `json:"mountpoint"`
 	FilesystemType string     `json:"filesystem_type"`
 	Options        []string   `json:"options"`
-	DiskUsage      *DiskUsage `json:"disk_usage,omitempty"`
+	DiskUsage      *DiskUsage `json:"disk_usage"`
 }
 
 type DiskUsage struct {
@@ -56,11 +56,16 @@ func ListDisks() ([]Disk, error) {
 	log.Info("Listing disks")
 	devices, err := disk.Partitions(true)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to list disk partitions")
 	}
 	disks := make([]Disk, 0)
 	for _, device := range devices {
-		disk, err := GetDisk(device.Device)
+		log.Infof("Checking disk (device: %s, mountpoint: %s, filesystem type: %s, opts: %s)", device.Device, device.Mountpoint, device.Fstype, device.Opts)
+		if device.Device == "none" {
+			log.Infof("Skipping disk with empty device (mountpoint: %s)", device.Mountpoint)
+			continue
+		}
+		disk, err := GetDisk(device.Mountpoint)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get disk")
 		}
