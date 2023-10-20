@@ -1,0 +1,17 @@
+digraph G {
+  rankdir = LR;
+  node [shape = box;];
+  
+  root [label = ".";];
+  
+  // Commands
+  subgraph cluster_0 {
+    label = "Commands";
+    
+    commands [label = "Commands";];
+    execute_command [label = "Execute commands";];
+    
+    commands -> execute_command;
+  }
+  root -> commands;
+}
