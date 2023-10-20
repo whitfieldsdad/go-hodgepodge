@@ -12,6 +12,12 @@ var (
 	CaseSensitive = false
 )
 
+// IsRegExp checks if the provided pattern is a regular expression (e.g. ^T\d{4}$)
+func IsRegExp(pattern string) bool {
+	_, err := regexp.Compile(pattern)
+	return err == nil
+}
+
 // IsGlobPattern checks if the provided pattern is a glob pattern (e.g. *.yaml)
 func IsGlobPattern(pattern string) bool {
 	_, err := glob.Compile(pattern)

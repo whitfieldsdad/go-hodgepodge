@@ -9,36 +9,12 @@ import (
 	"github.com/djherbis/times"
 )
 
-const (
-	IncludeFileSize       = false
-	IncludeFileTraits     = false
-	IncludeFileHashes     = false
-	IncludeFileTimestamps = false
-)
-
 // FileTimestamps contains the MACb timestamps of a file.
 type FileTimestamps struct {
 	ModifyTime time.Time  `json:"modify_time"`
 	AccessTime time.Time  `json:"access_time"`
 	ChangeTime time.Time  `json:"change_time"`
 	BirthTime  *time.Time `json:"birth_time"`
-}
-
-// FileMetadataOptions contains options for collecting file metadata.
-type FileMetadataOptions struct {
-	IncludeFileHashes     bool `json:"include_file_hashes"`     // If true, collect file hashes (i.e. MD5, SHA1, etc.).
-	IncludeFileTimestamps bool `json:"include_file_timestamps"` // If true, collect file timestamps (MACb).
-	IncludeFileTraits     bool `json:"include_file_traits"`     // If true, collect file traits (i.e. file type, permissions, etc.)
-	IncludeFileSize       bool `json:"include_file_size"`       // If true, collect file size.
-}
-
-func GetDefaultFileMetadataOptions() *FileMetadataOptions {
-	return &FileMetadataOptions{
-		IncludeFileTimestamps: IncludeFileTimestamps,
-		IncludeFileTraits:     IncludeFileTraits,
-		IncludeFileHashes:     IncludeFileHashes,
-		IncludeFileSize:       IncludeFileSize,
-	}
 }
 
 // File contains basic information about a file.
@@ -53,8 +29,8 @@ type File struct {
 	Hashes     *Hashes         `json:"hashes,omitempty"`
 }
 
-// GetFileMetadata returns basic information about a file.
-func GetFileMetadata(path string, opts *FileMetadataOptions) (*File, error) {
+// GetFile returns basic information about a file.
+func GetFile(path string, opts *FileOptions) (*File, error) {
 	m := &File{
 		Path:      path,
 		Filename:  filepath.Base(path),
@@ -64,7 +40,7 @@ func GetFileMetadata(path string, opts *FileMetadataOptions) (*File, error) {
 
 	// Optional data collection.
 	if opts == nil {
-		opts = GetDefaultFileMetadataOptions()
+		opts = GetDefaultFileOptions()
 	}
 	if opts.IncludeFileSize {
 		info, err := os.Stat(path)

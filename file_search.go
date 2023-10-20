@@ -56,15 +56,15 @@ func (s FileSearch) matchesAnyFilter(root string, info os.FileInfo) bool {
 	return false
 }
 
-func (s FileSearch) FindFiles(results chan<- File, opts *FileMetadataOptions) {
+func (s FileSearch) FindFiles(results chan<- File, opts *FileOptions) {
 	defer close(results)
 
 	paths := make(chan string)
 	go s.FindPaths(paths)
 
 	for path := range paths {
-		file, _ := GetFileMetadata(path, opts)
-		if file != nil {
+		file, err := GetFile(path, opts)
+		if err != nil {
 			continue
 		}
 		results <- *file

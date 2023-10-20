@@ -7,7 +7,7 @@ import (
 )
 
 func TestExecutePowerShellCommand(t *testing.T) {
-	subprocess, err := ExecuteShellCommand("whoami", PowerShell)
+	subprocess, err := ExecuteShellCommand("whoami", PowerShell, nil)
 	if err != nil {
 		t.Fatalf("Failed to execute command: %s\n", err)
 	}
@@ -15,7 +15,7 @@ func TestExecutePowerShellCommand(t *testing.T) {
 }
 
 func TestExecuteShellCommand(t *testing.T) {
-	subprocess, err := ExecuteShellCommand("whoami", Sh)
+	subprocess, err := ExecuteShellCommand("whoami", Sh, nil)
 	if err != nil {
 		t.Fatalf("Failed to execute command: %s\n", err)
 	}

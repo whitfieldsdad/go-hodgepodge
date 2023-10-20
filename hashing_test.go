@@ -113,7 +113,7 @@ func TestGetSHA256(t *testing.T) {
 }
 
 func TestGetSHA512(t *testing.T) {
-	result := GetSHA256([]byte(TestString))
+	result := GetSHA512([]byte(TestString))
 	assertEqual(t, TestStringSHA512, result)
 }
 

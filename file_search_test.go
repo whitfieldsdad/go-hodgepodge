@@ -48,10 +48,11 @@ func TestFindFilesWithOptions(t *testing.T) {
 	search := FileSearch{
 		Roots: []string{tmpDir},
 	}
-	opts := &FileMetadataOptions{
+	opts := &FileOptions{
 		IncludeFileTimestamps: false,
 		IncludeFileTraits:     false,
 		IncludeFileHashes:     false,
+		IncludeFileSize:       false,
 	}
 	go search.FindFiles(results, opts)
 

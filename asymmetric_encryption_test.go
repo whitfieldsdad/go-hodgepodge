@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -55,7 +54,6 @@ func TestRSAEncryptDecryptFile(t *testing.T) {
 
 	// Encrypt.
 	err = RSAEncryptFile(plaintextFile, ciphertextFile, publicKey)
-	fmt.Println(err)
 	assert.Nil(t, err, "Error should be nil")
 
 	// Decrypt.

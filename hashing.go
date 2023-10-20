@@ -111,7 +111,7 @@ func GetFileSHA256(path string) (string, error) {
 }
 
 func GetFileSHA512(path string) (string, error) {
-	return getFileHash(path, sha256.New())
+	return getFileHash(path, sha512.New())
 }
 
 func GetFileXXH64(path string) (string, error) {

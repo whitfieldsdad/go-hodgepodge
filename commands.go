@@ -44,11 +44,11 @@ var (
 // Command stores information about a command to be executed on a host. If the command type is "", the default command type for the current platform will be used. If the command type is "native", the command will be executed without wrapping it in a shell command (e.g. using `bash -c`).
 type Command struct {
 	Command     string `json:"command"`
-	CommandType string `json:"command_type,omitempty"`
+	CommandType string `json:"command_type"`
 }
 
 // Run executes a command, blocks until it completes, and returns information about the subprocess that was executed.
-func (c Command) Run() (*ExecutedCommand, error) {
+func (c Command) Run(opts *ExecuteCommandOptions) (*ExecutedCommand, error) {
 	command := c.Command
 	commandType := c.CommandType
 
@@ -62,7 +62,7 @@ func (c Command) Run() (*ExecutedCommand, error) {
 			return nil, errors.Wrap(err, "failed to wrap command")
 		}
 	}
-	p, err := ExecuteCommand(command, nil)
+	p, err := ExecuteCommand(command, opts)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to execute command")
 	}
@@ -85,7 +85,7 @@ type ExecutedCommand struct {
 }
 
 // ExecuteCommand executes a command, blocks until it completes, and returns information about the subprocess that was executed.
-func ExecuteCommand(command string, timeout *time.Duration) (*Process, error) {
+func ExecuteCommand(command string, opts *ExecuteCommandOptions) (*Process, error) {
 	if command == "" {
 		return nil, errors.New("command cannot be empty")
 	}
@@ -93,7 +93,7 @@ func ExecuteCommand(command string, timeout *time.Duration) (*Process, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to split command")
 	}
-	p, err := executeShellCommand(args)
+	p, err := executeShellCommand(args, opts)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to execute command")
 	}
@@ -160,15 +160,15 @@ func WrapCommand(command, commandType string) (string, error) {
 }
 
 // ExecuteShellCommand wraps a command, executes it, blocks until it completes, and returns information about the subprocess that was executed.
-func ExecuteShellCommand(command, commandType string, timeout *time.Duration) (*Process, error) {
+func ExecuteShellCommand(command, commandType string, opts *ExecuteCommandOptions) (*Process, error) {
 	w, err := WrapCommand(command, commandType)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to wrap command")
 	}
-	return ExecuteCommand(w, timeout)
+	return ExecuteCommand(w, opts)
 }
 
-func executeShellCommand(args []string) (*Process, error) {
+func executeShellCommand(args []string, opts *ExecuteCommandOptions) (*Process, error) {
 	command := strings.Join(args, " ")
 	log.Infof("Executing command: `%s`", command)
 
@@ -187,7 +187,13 @@ func executeShellCommand(args []string) (*Process, error) {
 	}
 
 	// Gather information about the subprocess.
-	subprocess, err := GetProcess(cmd.Process.Pid)
+	var fileOpts *FileOptions
+	if opts == nil {
+		fileOpts = GetDefaultFileOptions()
+	} else {
+		fileOpts = opts.FileOptions
+	}
+	subprocess, err := GetProcess(cmd.Process.Pid, fileOpts)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to lookup process")
 	}

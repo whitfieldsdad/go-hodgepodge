@@ -25,8 +25,8 @@ func NewProcessTree(processes []Process) *ProcessTree {
 	processMap := make(map[int]Process)
 	pidMap := make(map[int]int)
 	for _, p := range processes {
-		processMap[p.Pid] = p
-		pidMap[p.Pid] = p.Ppid
+		processMap[p.PID] = p
+		pidMap[p.PPID] = p.PPID
 	}
 	return &ProcessTree{
 		CreateTime: now,

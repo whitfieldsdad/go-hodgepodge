@@ -1,12 +1,16 @@
+//go:build windows
+// +build windows
+
 package main
 
 import (
 	"github.com/charmbracelet/log"
+	"github.com/pkg/errors"
 	"golang.org/x/sys/windows"
 )
 
 // currentProcessIsElevated checks to see if the current process is either running with elevated privileges, or was started by an administrative user.
-func currentProcessIsElevated() bool {
+func currentProcessIsElevated() (bool, error) {
 	log.Info("Checking if process is running with elevated privileges and/or was created by an administrative user")
 
 	var sid *windows.SID
@@ -19,23 +23,18 @@ func currentProcessIsElevated() bool {
 		&sid)
 
 	if err != nil {
-		log.Errorf("Failed to allocate and initialize SID: %v", err)
-		return false
+		return false, errors.Wrap(err, "failed to allocate and initialize SID")
 	}
 	token := windows.Token(0)
 	defer token.Close()
 
 	member, err := token.IsMember(sid)
 	if err != nil {
-		log.Errorf("Failed to check token membership: %v", err)
-		return false
+		return false, errors.Wrap(err, "failed to check token membership")
 	}
 	if member {
-		log.Info("Process was started by an administrative user")
+		return true, nil
 	}
 	elevated := token.IsElevated()
-	if elevated {
-		log.Info("Process is running with elevated privileges")
-	}
-	return member || elevated
+	return elevated, nil
 }

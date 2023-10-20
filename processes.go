@@ -41,7 +41,7 @@ func GetParentProcessId(pid int) (int, error) {
 }
 
 // GetProcess looks up a process by PID.
-func GetProcess(pid int, opts *FileMetadataOptions) (*Process, error) {
+func GetProcess(pid int, opts *FileOptions) (*Process, error) {
 	p, err := sysinfo.Process(pid)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to lookup process")
@@ -54,7 +54,7 @@ func GetProcess(pid int, opts *FileMetadataOptions) (*Process, error) {
 }
 
 // ListProcesses returns a list of processes.
-func ListProcesses(opts *FileMetadataOptions) ([]Process, error) {
+func ListProcesses(opts *FileOptions) ([]Process, error) {
 	log.Infof("Listing processes")
 	processes, err := sysinfo.Processes()
 	if err != nil {
@@ -72,7 +72,7 @@ func ListProcesses(opts *FileMetadataOptions) ([]Process, error) {
 	return rows, nil
 }
 
-func getProcess(p types.Process, opts *FileMetadataOptions) (*Process, error) {
+func getProcess(p types.Process, opts *FileOptions) (*Process, error) {
 	info, err := p.Info()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get process info")
@@ -87,7 +87,7 @@ func getProcess(p types.Process, opts *FileMetadataOptions) (*Process, error) {
 		Argc:             len(info.Args),
 		StartTime:        &info.StartTime,
 	}
-	file, err := GetFileMetadata(info.Exe, opts)
+	file, err := GetFile(info.Exe, opts)
 	if err != nil {
 		log.Warnf("Failed to get file metadata: %s (path: %s)", err, file.Path)
 	} else {
@@ -116,7 +116,7 @@ func GetPidMap() (map[int]int, error) {
 	return m, nil
 }
 
-func CurrentProcessIsElevated() bool {
+func CurrentProcessIsElevated() (bool, error) {
 	return currentProcessIsElevated()
 }
 

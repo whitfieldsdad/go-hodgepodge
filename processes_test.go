@@ -8,7 +8,7 @@ import (
 )
 
 func TestListProcesses(t *testing.T) {
-	opts := &FileMetadataOptions{
+	opts := &FileOptions{
 		IncludeFileSize:       true,
 		IncludeFileHashes:     true,
 		IncludeFileTimestamps: true,

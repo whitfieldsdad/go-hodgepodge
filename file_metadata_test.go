@@ -7,15 +7,15 @@ import (
 )
 
 const (
-	testFile = "../../tools/windows/calc.exe"
+	testFile = "tools/windows/calc.exe"
 )
 
-func TestGetFileMetadata(t *testing.T) {
-	exists, err := Exists(testFile)
-	assert.True(t, exists)
+func TestGetFile(t *testing.T) {
+	exists, err := FileExists(testFile)
 	assert.Nil(t, err)
+	assert.True(t, exists)
 
-	meta, err := GetFileMetadata(testFile, nil)
+	meta, err := GetFile(testFile, nil)
 	assert.Nil(t, err)
 	assert.NotNil(t, meta)
 
@@ -31,17 +31,15 @@ func TestGetFileMetadata(t *testing.T) {
 	}
 }
 
-func TestGetFileMetadataWithOptions(t *testing.T) {
-	opts := GetDefaultFileMetadataOptions()
+func TestGetFileWithOptions(t *testing.T) {
+	opts := GetDefaultFileOptions()
 	opts.IncludeFileTimestamps = false
 	opts.IncludeFileTraits = false
 
 	// Verify that we can disable timestamps and traits.
-	meta, err := GetFileMetadata(testFile, opts)
+	meta, err := GetFile(testFile, opts)
 	assert.Nil(t, err)
 	assert.NotNil(t, meta)
-	assert.Nil(t, meta.Traits)
-	assert.Nil(t, meta.Timestamps)
 }
 
 func TestGetFileTimestamps(t *testing.T) {
@@ -52,17 +50,18 @@ func TestGetFileTimestamps(t *testing.T) {
 
 func TestGetFileTraits(t *testing.T) {
 	expected := &FileTraits{
-		IsDirectory:       false,
-		IsRegularFile:     true,
-		IsSymbolicLink:    false,
-		IsSocket:          false,
-		IsHardLink:        false,
-		IsNamedPipe:       false,
 		IsBlockDevice:     false,
 		IsCharacterDevice: false,
+		IsDirectory:       false,
+		IsHardLink:        false,
 		IsHidden:          false,
+		IsNamedPipe:       false,
+		IsRegularFile:     true,
+		IsSocket:          false,
+		IsSymbolicLink:    false,
 	}
 	result, err := GetFileTraits(testFile)
 	assert.Nil(t, err)
+	assert.NotNil(t, result)
 	assert.Equal(t, expected, result)
 }

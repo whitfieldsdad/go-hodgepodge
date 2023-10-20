@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-// Exists returns true if the file exists.
-func Exists(path string) (bool, error) {
+// FileExists returns true if the file exists.
+func FileExists(path string) (bool, error) {
 	path, err := RealPath(path)
 	if err != nil {
 		return false, err

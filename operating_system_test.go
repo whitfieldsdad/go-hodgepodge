@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetOS(t *testing.T) {
+func TestGetOperatingSystem(t *testing.T) {
 	os := GetOperatingSystem()
 	assert.NotEmpty(t, os.Type)
 	assert.NotEmpty(t, os.Architecture)
