@@ -3,15 +3,77 @@ digraph G {
   node [shape = box;];
   
   root [label = ".";];
-  
-  // Commands
-  subgraph cluster_0 {
-    label = "Commands";
-    
-    commands [label = "Commands";];
-    execute_command [label = "Execute commands";];
-    
-    commands -> execute_command;
-  }
-  root -> commands;
+
+  // Code execution
+  code_execution [label = "Code execution";];
+  commands [label = "Commands";];   
+  sh [label = "sh";];
+  bash [label = "bash";];
+  command_prompt [label = "Command prompt";];
+  powershell [label = "Powershell";];
+  native [label = "Native";];
+
+  root -> code_execution -> commands;
+  commands -> sh;
+  commands -> bash;
+  commands -> command_prompt;
+  commands -> powershell;
+  commands -> native;
+
+  // Host information
+  host_metadata [label = "Host metadata";];
+  files [label = "Files";];
+  file_metadata [label = "File metadata";];
+  file_hashing [label = "File hashing";];
+  file_search [label = "File search";];
+  processes [label = "Processes";];
+  disks [label = "Disks";];
+  network_interfaces [label = "Network interfaces";];
+  network_connections [label = "Network connections";];
+  network_location [label = "Network location";];
+  environment_variables [label = "Environment variables";];
+  operating_system [label = "Operating system";];
+  temporary_files [label = "Temporary files";];
+
+  root -> host_metadata;
+  host_metadata -> file_search;
+  root -> files;
+  files -> file_metadata;
+  files -> file_hashing;
+  host_metadata -> files [style=dotted];
+  host_metadata -> processes;
+  host_metadata -> disks;
+  host_metadata -> network_interfaces;
+  host_metadata -> network_connections;
+  host_metadata -> network_location;
+  host_metadata -> environment_variables;
+  host_metadata -> operating_system;
+  host_metadata -> temporary_files;
+
+  // Cryptography
+  cryptography [label = "Cryptography";];
+  asymmetric_encryption [label = "Asymmetric encryption";];
+  rsa [label = "RSA";];
+  symmetric_encryption [label = "Symmetric encryption";];
+  aes_256_gcm [label = "AES-256-GCM";];
+  chacha20_poly1305 [label = "Chacha20-Poly1305";];
+  key_derivation [label = "Key derivation";];
+  pbkdf2_hmac_sha256 [label = "PBKDF2-HMAC-SHA256";];
+  hashing [label = "Hashing";];
+  md5 [label = "MD5";];
+  sha1 [label = "SHA-1";];
+  sha256 [label = "SHA-256";];
+  sha512 [label = "SHA-512";];
+
+  root -> cryptography;
+  cryptography -> asymmetric_encryption;
+  cryptography -> asymmetric_encryption -> rsa;
+  cryptography -> symmetric_encryption -> aes_256_gcm;
+  cryptography -> symmetric_encryption -> chacha20_poly1305;
+  cryptography -> key_derivation -> pbkdf2_hmac_sha256;
+  cryptography -> hashing;
+  hashing -> md5;
+  hashing -> sha1;
+  hashing -> sha256;
+  hashing -> sha512;
 }
