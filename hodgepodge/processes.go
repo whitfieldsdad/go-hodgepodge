@@ -3,6 +3,7 @@ package hodgepodge
 import (
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/charmbracelet/log"
@@ -60,22 +61,40 @@ func ListProcesses(opts *FileOptions) ([]Process, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to list processes")
 	}
-	var rows []Process
+
+	// Resolve information about processes across multiple goroutines.
+	results := make(chan Process, len(processes))
+
+	var wg sync.WaitGroup
 	for _, process := range processes {
-		row, err := getProcess(process, opts)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get process")
-		}
-		rows = append(rows, *row)
+		wg.Add(1)
+		go goGetProcess(process, opts, &wg, results)
+	}
+	wg.Wait()
+	close(results)
+
+	var rows []Process
+	for process := range results {
+		rows = append(rows, process)
 	}
 	log.Infof("Found %d processes", len(rows))
 	return rows, nil
 }
 
+func goGetProcess(p types.Process, opts *FileOptions, wg *sync.WaitGroup, results chan<- Process) {
+	defer wg.Done()
+
+	process, err := getProcess(p, opts)
+	if err != nil {
+		return
+	}
+	results <- *process
+}
+
 func getProcess(p types.Process, opts *FileOptions) (*Process, error) {
 	info, err := p.Info()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get process info")
+		return nil, err
 	}
 	process := &Process{
 		Name:             info.Name,

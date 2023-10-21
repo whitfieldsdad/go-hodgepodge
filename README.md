@@ -25,3 +25,61 @@ The following features are available:
 | List running processes        | Data collection |                                                                 |                                                                                                            |
 | Search for files              | Data collection | Search for files by path or filename.                           |                                                                                                            |
 | Execute shell commands        | Code execution  | Execute shell commands and capture their output.                | Supports executing commands in a sh, bash, Powershell, or Command Prompt session.                          |
+
+## Examples
+
+### Listing processes
+
+```shell
+go run main.go processes list | jq
+```
+
+```json
+{
+  "name": "docker",
+  "working_directory": "/mnt/c/Users/tyler/AppData/Roaming/Docker",
+  "pid": 151,
+  "ppid": 150,
+  "file": {
+    "path": "/mnt/wsl/docker-desktop/cli-tools/usr/bin/docker",
+    "filename": "docker",
+    "directory": "/mnt/wsl/docker-desktop/cli-tools/usr/bin",
+    "extension": "",
+    "size": 56389632,
+    "timestamps": {
+      "modify_time": "2023-01-19T08:05:49-05:00",
+      "access_time": "2023-01-19T08:05:49-05:00",
+      "change_time": "2023-01-19T08:06:15-05:00",
+      "birth_time": null
+    },
+    "traits": {
+      "is_directory": false,
+      "is_regular_file": true,
+      "is_symbolic_link": false,
+      "is_socket": false,
+      "is_hard_link": false,
+      "is_named_pipe": false,
+      "is_block_device": false,
+      "is_character_device": false,
+      "is_hidden": false
+    },
+    "hashes": {
+      "md5": "8b39ff078adbd2a209104b8163934d3c",
+      "sha1": "a49f2f33afd484064637282d14f6d71b59d43a16",
+      "sha256": "f1896376f8d504e4e5143d3695298d884bf0a4eb30395382b310bfd3af277951",
+      "sha512": "887431ac3d37c932b31247f2aa6b973b024cb61e63eb23aa1077f7be0e0fb6075fe48225b7a45c0e66220854aeec52deabde9979fde640a7809f8f9df3747f9f",
+      "xxh64": "a09722851a6e6353"
+    }
+  },
+  "command_line": "docker serve --address unix:///root/.docker/run/docker-cli-api.sock",
+  "argv": [
+    "docker",
+    "serve",
+    "--address",
+    "unix:///root/.docker/run/docker-cli-api.sock"
+  ],
+  "argc": 4,
+  "start_time": "2023-10-16T19:17:52.26-04:00"
+}
+...
+```
