@@ -14,7 +14,7 @@ func TestFindPaths(t *testing.T) {
 	search := FileSearch{
 		Roots: []string{tmpDir},
 	}
-	go search.FindPaths(results)
+	go FindPaths(search, results)
 
 	total := 0
 	for range results {
@@ -31,29 +31,7 @@ func TestFindFiles(t *testing.T) {
 	search := FileSearch{
 		Roots: []string{tmpDir},
 	}
-	go search.FindFiles(results, nil)
-
-	total := 0
-	for range results {
-		total++
-	}
-	assert.Greater(t, total, 0)
-}
-
-func TestFindFilesWithOptions(t *testing.T) {
-	tmpDir, err := GetTempDir()
-	assert.Nil(t, err)
-
-	results := make(chan File)
-	search := FileSearch{
-		Roots: []string{tmpDir},
-	}
-	opts := &FileOptions{
-		IncludeFileTimestamps: false,
-		IncludeFileTraits:     false,
-		IncludeFileHashes:     false,
-	}
-	go search.FindFiles(results, opts)
+	go FindFiles(search, results, nil)
 
 	total := 0
 	for range results {

@@ -13,7 +13,6 @@ type FileFilter struct {
 	Paths     []string `json:"paths"`
 }
 
-// Matches is a boolean function that returns true if the provided file matches the filter. If any errors arise, they will be silently ignored.
 func (f FileFilter) Matches(path string, info *os.FileInfo) bool {
 	if len(f.Filenames) > 0 {
 		if !hasMatchingFilename(path, f.Filenames) {
@@ -47,20 +46,11 @@ type FileSearch struct {
 	FileFilters []FileFilter `json:"file_filters"`
 }
 
-func (s FileSearch) matchesAnyFilter(root string, info os.FileInfo) bool {
-	for _, filter := range s.FileFilters {
-		if filter.Matches(root, &info) {
-			return true
-		}
-	}
-	return false
-}
-
-func (s FileSearch) FindFiles(results chan<- File, opts *FileOptions) {
+func FindFiles(search FileSearch, results chan<- File, opts *FileOptions) {
 	defer close(results)
 
 	paths := make(chan string)
-	go s.FindPaths(paths)
+	go FindPaths(search, paths)
 
 	for path := range paths {
 		file, err := GetFile(path, opts)
@@ -71,26 +61,40 @@ func (s FileSearch) FindFiles(results chan<- File, opts *FileOptions) {
 	}
 }
 
-func (s FileSearch) FindPaths(results chan<- string) {
+func FindPaths(search FileSearch, results chan<- string) {
 	defer close(results)
 
-	roots := ReducePaths(s.Roots)
+	roots := ReducePaths(search.Roots)
 	for _, root := range roots {
 		info, err := os.Stat(root)
 		if err != nil {
 			continue
 		}
 		if !info.IsDir() {
-			if len(s.FileFilters) > 0 {
-				if !s.matchesAnyFilter(root, info) {
+			if len(search.FileFilters) > 0 {
+				matches := false
+				for _, filter := range search.FileFilters {
+					if filter.Matches(root, &info) {
+						matches = true
+						break
+					}
+				}
+				if !matches {
 					continue
 				}
 			}
 			results <- root
 		} else {
 			_ = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-				if len(s.FileFilters) > 0 {
-					if !s.matchesAnyFilter(root, info) {
+				if len(search.FileFilters) > 0 {
+					matches := false
+					for _, filter := range search.FileFilters {
+						if filter.Matches(path, &info) {
+							matches = true
+							break
+						}
+					}
+					if !matches {
 						return nil
 					}
 				}

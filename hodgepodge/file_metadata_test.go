@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	testFile = "tools/windows/calc.exe"
+	testFile = "../tools/windows/calc.exe"
 )
 
 func TestGetFile(t *testing.T) {
