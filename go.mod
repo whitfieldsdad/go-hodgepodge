@@ -9,6 +9,7 @@ require (
 	github.com/elastic/go-sysinfo v1.11.1
 	github.com/gobwas/glob v0.2.3
 	github.com/google/uuid v1.3.1
+	github.com/mitchellh/cli v1.1.5
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/oklog/ulid v1.3.1
 	github.com/pkg/errors v0.9.1
@@ -31,7 +32,6 @@ require (
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/mattn/go-colorable v0.0.9 // indirect
-	github.com/mitchellh/cli v1.1.5 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.0 // indirect
 	github.com/posener/complete v1.1.1 // indirect

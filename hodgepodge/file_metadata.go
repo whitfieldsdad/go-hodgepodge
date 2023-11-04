@@ -11,9 +11,9 @@ import (
 
 // FileTimestamps contains the MACb timestamps of a file.
 type FileTimestamps struct {
-	ModifyTime time.Time  `json:"modify_time"`
-	AccessTime time.Time  `json:"access_time"`
-	ChangeTime time.Time  `json:"change_time"`
+	ModifyTime *time.Time `json:"modify_time"`
+	AccessTime *time.Time `json:"access_time"`
+	ChangeTime *time.Time `json:"change_time"`
 	BirthTime  *time.Time `json:"birth_time"`
 }
 
@@ -78,17 +78,19 @@ func GetFileTimestamps(path string) (*FileTimestamps, error) {
 	if err != nil {
 		return nil, err
 	}
+	m := st.ModTime()
+	a := st.AccessTime()
 	timestamps := &FileTimestamps{
-		ModifyTime: st.ModTime(),
-		AccessTime: st.AccessTime(),
+		ModifyTime: &m,
+		AccessTime: &a,
 	}
 	if st.HasChangeTime() {
-		changeTime := st.ChangeTime()
-		timestamps.ChangeTime = changeTime
+		c := st.ChangeTime()
+		timestamps.ChangeTime = &c
 	}
 	if st.HasBirthTime() {
-		birthTime := st.BirthTime()
-		timestamps.BirthTime = &birthTime
+		b := st.BirthTime()
+		timestamps.BirthTime = &b
 	}
 	return timestamps, nil
 }
